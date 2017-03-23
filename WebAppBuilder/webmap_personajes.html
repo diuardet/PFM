@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>webMap</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/3.19/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
+    <link rel="stylesheet" href="css.css">
+    <style>
+      html, body, #map {
+        height: 800px;
+        width: 98%;
+        margin: 1;
+        padding: 0;
+      }
+    </style>
+
+    <script src="https://js.arcgis.com/3.19/"></script>
+
+    <script>
+    require(["esri/map",
+			"esri/arcgis/utils",
+      "esri/layers/FeatureLayer",
+			"dojo/domReady!"],
+      function (Map, arcgisUtils, FeatureLayer) {
+        webmapID = "5899d370bb0e4c90b5acdfb069111b24";
+        arcgisUtils.createMap (webmapID, "map").then(function(response){
+          var personajes = new FeatureLayer("http://services7.arcgis.com/hGkL2bC7k24OruM9/arcgis/rest/services/PersonajesParque/FeatureServer", {
+            mode: FeatureLayer.MODE_SELECTION,
+            outFields: ["*"],
+            opacity: 0.75
+          });
+        map.addLayer(personajes);
+        });
+    });
+    </script>
+  </head>
+
+  <body class="claro">
+
+    <div id="content">
+      <div id="layerList"></div>
+      <div id="map"
+        style="overflow:hidden;">
+      </div>
+    </div>
+
+  </body>
+</html>

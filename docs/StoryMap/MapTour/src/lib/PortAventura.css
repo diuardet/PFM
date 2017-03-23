@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+html, body, header {
+  font-family: 'Lato', sans-serif;
+}
+
+#header .title {
+  height:40px;
+  font-size: 30px;
+}
+
+#header .subtitle {
+  font-size: 18px;
+}
+
+#header .shareIcon {
+  font-size: 175%;
+  margin-left: 15px;
+}
+
+.logo {
+  float: left;
+  margin-left: 1%
+}
+.textArea {
+  margin-left: 7%
+}
+#header .rightArea {
+  float: right;
+  margin-right: 1%
+}
