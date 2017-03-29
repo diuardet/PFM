@@ -1,0 +1,23 @@
+map.on("layer-add-result", function(lyr, err){
+    if(lyr.layer === myLayer){
+        console.log('found the layer i want, do something specific');
+  var query_i = new Query();
+  query.where = timeExtent;
+  featureLayer.queryFeatures(query,function(featureSet){
+    //do something with the results here
+  });
+});
+
+
+map.on("layer-add-result", function(lyr, err){
+  if(lyr.layer === personajes){
+      console.log("Se agregó la capa de personajes");
+      var query_i = new Query();
+      var date = new Date();
+      var h = date.getHours();
+      query.where = nombre;
+      featureLayer.queryFeatures(query,function(featureSet){
+        //do something with the results here
+      });
+    }
+  });

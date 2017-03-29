@@ -91,58 +91,62 @@
         domClass.add(popup.domNode, "myTheme");
 
         map = new Map("map", {
-          basemap: "streets",
-          center: [1.158118, 41.087586],
-          zoom: 16,
+          basemap: "topo",
+          center: [-122.402, 37.795],
+          zoom: 18,
           infoWindow: popup
         });
+
+
 
         map.on("click", function (event) {
           var query = new Query();
           query.geometry = pointToExtent(map, event.mapPoint, 10);
-          var deferred = personajes.selectFeatures(query,
+          var deferred = featureLayer.selectFeatures(query,
             FeatureLayer.SELECTION_NEW);
           map.infoWindow.setFeatures([deferred]);
           map.infoWindow.show(event.mapPoint);
         });
 
+        var incidentLayer = new ArcGISTiledMapServiceLayer ("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/Street_Trees/MapServer");
+        map.addLayer(incidentLayer);
+
         var template = new InfoTemplate();
         template.setContent(getTextContent);
 
-        var atracciones = new FeatureLayer("http://services7.arcgis.com/hGkL2bC7k24OruM9/arcgis/rest/services/PoligonosAtracciones/FeatureServer/0");
-        map.addLayer(atracciones);
-
-        var mundos = new FeatureLayer("http://services7.arcgis.com/hGkL2bC7k24OruM9/arcgis/rest/services/ParquePisable/FeatureServer/0");
-        map.addLayer(mundos);
-
-        var personajes = new FeatureLayer("http://services7.arcgis.com/hGkL2bC7k24OruM9/arcgis/rest/services/Personajes_pruebas/FeatureServer/0",
+        var featureLayer = new FeatureLayer("https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/SFStreetTreesRendered/FeatureServer/0",
           {
             mode: FeatureLayer.MODE_SELECTION,
             outFields: ["*"],
             infoTemplate: template
           });
 
-        map.addLayer(personajes);
-
-        personajes.on("load", function (){
-          console.log("Se agregó la capa de personajes");
-          var query_i = new Query();
-          var date = new Date();
-          var h = date.getHours();
-          query_i.where = inicio < h < fin;
-          personajes.queryFeatures(query,function(featureSet){
-            //do something with the results here
-          });
-        });
+        map.addLayer(featureLayer);
 
         function getTextContent (graphic) {
           var attributes = graphic.attributes;
-          var nombre = attributes.Personaje;
-          var inicio = attributes.HoraInicio;
-          var fin = attributes.HoraFin;
+          var scientificAndCommonName =
+            attributes.qSpecies
+            .replace('"', "")
+            .split("::")
+            .map(function (name) {
+              return lang.trim(name);
+            });
+          var scientificName = scientificAndCommonName[0];
+          var commonName = scientificAndCommonName[1];
+          var speciesName;
 
-          return  nombre + "<br>" +
-                  "de " + inicio + "h. a " + fin + "h.";
+          if (commonName) {
+            speciesName = "<b>" + commonName + "</b><br/>" +
+                          "<i>" + scientificName + "</i>";
+          }
+          else {
+            speciesName = "<i>" + scientificName + "</i>";
+          }
+
+          return  speciesName + "<br>" +
+                  attributes.qAddress + "<br/>" +
+                  "Planted on " + formatDate(attributes.PlantDate);
         }
 
         function formatDate (value) {
